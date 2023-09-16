@@ -1,0 +1,288 @@
+.menu{
+	list-style-type: none;
+	display: inline-flex;
+	margin-right: 32%;
+	color: #C99047;
+	font-size: 19px;
+	float: right;
+	margin-top: 6%;
+	/*margin-right: 0px;*//*here it get the menu to the edge*/
+}
+.menu li{
+	margin-right: 28%;
+	cursor: pointer;
+}
+
+body{
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	min-height: 100vh;
+}
+.container{
+	max-width: 1200px;
+	width: 95%;
+}
+
+.horizon{
+	border-color: #C99047;
+	width: 90%;
+	margin-top: -4px;
+}
+
+.medhorizon{
+	width: 80%;
+	margin-left: 10%;
+}
+
+.logo{
+	margin-left: 4%;
+	margin-top: 1%;
+}
+.banner{
+	margin-left: 7%;
+	width: 87%;
+}
+.content{
+	border-color: green;
+	color: black;
+	position: absolute;
+	width: 90%;
+	margin-left: 5%;
+}
+.left-content{
+	margin-left: 3%;
+	font-size: 26px;
+	width: 40%;
+	float: left;
+	margin-top: 2%;
+}
+.right-content{
+	float: right;
+}
+.booking{
+	font-size: large;
+	font-weight: bold;
+    border-radius: 49px;
+    color: white;
+    padding: 1% 4%;
+    width: fit-content;
+    background-color: #C5873A;
+}
+.READMORE{
+	font-size: 15px;
+	font-weight: bold;
+    border-radius: 49px;
+    color: white;
+    padding: 2% 4%;
+    width: fit-content;
+    background-color: #C5873A;
+}
+
+.bookings{
+	font-size: 15px;
+	font-weight: bold;
+    border-radius: 49px;
+    color: white;
+    padding: 2px 3%;
+    width: fit-content;
+    background-color: #C5873A;
+    margin-left: 35%;
+}
+.submit{
+	font-size: 15px;
+	font-weight: bold;
+    border-radius: 49px;
+    color: white;
+    padding: 1% 4%;
+    width: fit-content;
+    background-color: #C99047;
+    margin-left: 80%;
+    margin-top: 3%;
+}
+
+.active{
+	font-weight: bold;
+    font-size: 22px;
+    color: #86654B;
+}
+.profile-img{
+	width: fit-content;
+	margin-top: 5%;
+	margin-left: 7%;
+}
+.profile-img > img {
+	width: 93%;
+}
+aside{
+	width: 50%;
+	float: right;
+	margin-top: -43%;
+    margin-right: 7%;
+}
+h1{
+	font-size: 30px;
+	font-weight: bold;
+}
+.position{
+	font-weight: bold;
+}
+.about-content{
+	margin-top: 10%;
+}
+.about-content > p {
+	margin-bottom: 5%;
+}
+.top-right-content{
+	width: 40%;
+	float: right;
+}
+
+.top-right-content ul{
+	padding-bottom: 2px !important;
+	font-size: 15px;
+	margin-top: 0px;
+}
+
+.SCTI{
+	margin-left: 10%;
+}
+.service-content-top{
+	margin-right: 3%;
+	margin-top: 5%;
+	box-shadow: 10px 10px 10px rgb(0 0 0 / 0.2);
+	height: 50vh;
+}
+.service-content-bottom{
+	margin-top: 10%;
+	box-shadow: -8px 10px 25px rgb(0, 0, 0, 0.2);
+	box-shadow-left: 10px;
+	margin-left: 3%;
+	height: 50vh;
+}
+.service-img{
+	float: right;
+	margin-right: 3%;
+}
+
+.bottom-left-content{
+	margin-left: 11%;
+	padding-top: 1%;
+	margin-bottom: 0px;
+}
+.testimony-content-top{
+	text-align: center;
+	margin-top: 5%;
+}
+.testimony-content-top h1 {
+	font-weight: bolder;
+}
+.testimony-content-top p {
+	width: 50%;
+	margin-left: 25%;
+	margin-bottom: 3%;
+}
+.Uname{
+	font-size: 15px;
+	font-weight: bold;
+    color: black;
+    padding: 1% 4%;
+    width: fit-content;
+    text-align: center;
+}
+.Utestimony{
+	font-size: 15px;
+	font-weight: bold;
+    color: white;
+    padding: 1% 4%;
+    width: fit-content;
+    background-color: #C99047;
+    margin-left: 40%;
+}
+
+.contact-form{
+	float: right;
+	margin-top: 5%;
+	margin-right: 2%;
+	color: white;
+}
+.contact-content{
+	margin-top: 5%;
+	margin-left: 10%;
+}
+.contact-content h1{
+	font-weight: bold;
+}
+.contact-form input{
+	width: 26.3rem;
+	line-height: 40px;
+	margin-bottom: 3%;
+	background-color: #C99047;
+	color: white;
+	border: none;
+}
+.contact-form textarea{
+	height: 10rem;
+	width: 25rem;
+	background-color: #C99047;
+}
+
+.contact-form select{
+	width: 26.5rem;
+	height: 45px;
+	margin-bottom: 3%;
+	background-color: #C99047;
+	color: white !important;
+	border: none;
+}
+
+footer{
+	text-align: center;
+	color: white !important;
+	margin-top: 20%;
+	border-color: red;
+	background-color: #C99047 !important;
+}
+
+.flatico{
+	font-size:2em;
+	margin-right: 2%;
+}
+
+.footer-menu li{
+	display:inline-flex;
+    padding-right: 5%;
+    list-style: none;
+}
+.projects{
+	display: inline-flex;
+	border-color: black;
+	margin-top: 10%;
+	text-align: center;
+}
+
+.proj{
+	margin-right: 3%;
+	width: 80%;
+	/*border: 2px solid #C99047;*/
+	box-shadow: 10px 10px 10px rgb(0 0 0 / 0.2);
+}
+
+.proj:hover{
+	box-shadow: 15px 15px 15px 10px rgb(0 0 0 / 0.1);
+}
+
+.proj img{
+	width: 60%;
+	margin-top: 5%;
+}
+.projhead{
+	margin-top: 10%;
+	text-align: center;
+}
+
+@media screen and (max-width: 1366px) {
+  .horizon {
+    width: 92%;
+  }
+}
