@@ -2,7 +2,7 @@
 	list-style-type: none;
 	display: inline-flex;
 	margin-right: 32%;
-	color: #C99047;
+	color: #C99047 !important;
 	font-size: 19px;
 	float: right;
 	margin-top: 6%;
@@ -12,7 +12,9 @@
 	margin-right: 28%;
 	cursor: pointer;
 }
-
+a{
+	color: #C99047 !important;
+}
 body{
 	align-items: center;
 	justify-content: center;
@@ -127,9 +129,7 @@ h1{
 .position{
 	font-weight: bold;
 }
-.about-content{
-	margin-top: 10%;
-}
+s
 .about-content > p {
 	margin-bottom: 5%;
 }
@@ -151,14 +151,14 @@ h1{
 	margin-right: 3%;
 	margin-top: 5%;
 	box-shadow: 10px 10px 10px rgb(0 0 0 / 0.2);
-	height: 50vh;
+	height: 70vh;
 }
 .service-content-bottom{
 	margin-top: 10%;
 	box-shadow: -8px 10px 25px rgb(0, 0, 0, 0.2);
 	box-shadow-left: 10px;
 	margin-left: 3%;
-	height: 50vh;
+	height: 70vh;
 }
 .service-img{
 	float: right;

@@ -12,11 +12,11 @@
 	<header>
 		<img src="img/logo.png" class="logo">
 		 <ol class="menu">
-		<li><a href="index.html">Home</a></li>
-		<li class="active"><a href="about.html">About</a></li>
-		<li><a href="service.html">Services</a></li>
-		<li><a href="testimony.html">Testimony</a></li>
-		<li><a href="contact.html">Contacts</a></li>
+		<li onclick="Home()">Home</li>
+		<li class="active"  onclick="About()">About</li>
+		<li  onclick="Services()">Services</li>
+		<li  onclick="Testimony()">Testimony</li>
+		<li  onclick="Contacts()">Contacts</li>
 	</ol>
 	<hr class="horizon">
 	</header>
@@ -43,7 +43,7 @@
 
 	<div class="projects">
 		<div class="proj">
-			<img src="img/compass.png">
+			<img src="img/cross.png">
 			<h6>Workshop for church leaders</h6>
 			<p>This workshop was to empower leadership on how to come into rest or peace by controlling their emotions and thoughts.</p>
 		</div>
@@ -67,20 +67,57 @@
 
 	<footer>
 	<div>
-		<i class="fui-facebook flatico"></i> <i class="fui-instagram flatico"></i> <i class="fui-linkedin flatico"></i>
-	</div>
-	<div>
-		<ol class="footer-menu">
-			<li>ABOUT</li>
-			<li>SERVICES</li>
-			<li>TESTIMONY</li>
-			<li>CONTACT</li>
-		</ol>
+		<i class="fui-facebook flatico" onclick="facebook()"></i> 
+		<i class="fui-instagram flatico"  onclick="instagram()"></i> 
+		<i class="fui-linkedin flatico"  onclick="linkedin()"></i>
 	</div>
 	<div>
 		QBN Consultancy Copyright © 2023 QBN - All rights reserved || Designed By: KF Matshwi  
 	</div>
 </footer>
+
+<script type="text/javascript">
+	function Home() {
+  location.href = "index.html";
+  console.log("hi");
+}
+
+function About() {
+  location.href = "about.html";
+  console.log("hi");
+}
+
+function Services() {
+  location.href = "service.html";
+  console.log("hi");
+}
+
+function Testimony() {
+  location.href = "testimony.html";
+  console.log("hi");
+}
+
+function Contacts() {
+  location.href = "contact.html";
+  console.log("hi");
+}
+function facebook() {
+  location.href = "https://www.facebook.com/qbnconsultancy";
+  console.log("hi");
+}
+
+function instagram() {
+  location.href = "https://instagram.com/queennthite?igshid=OGQ5ZDc2ODk2ZA==";
+  console.log("hi");
+}
+
+function linkedin() {
+  location.href = "https://www.linkedin.com/company/qbn-consultancy/";
+  console.log("hi");
+}
+
+
+</script>
 
 </body>
 </html>
