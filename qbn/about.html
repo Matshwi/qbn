@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet"/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<title>QBN</title>
 </head>
 <body>
@@ -20,6 +21,13 @@
 	</ol>
 	<hr class="horizon">
 	</header>
+	<div class="floating-container" onclick="Go_down()">
+  <div class="floating-button">
+  	<i class="arrow down"></i>
+  	<i class="arrow down"></i>
+  	<i class="arrow down"></i>
+  </div>
+</div>
 	<div>
 		<img src="img/pimg.png" class="profile-img">
 	</div>
@@ -33,9 +41,10 @@
 
 			<p>Queen is also an author and a pastor; her calling comes with the gift of tapping into spiritual principles that respond to practical life challenges. She practicals what she teaches and has a proven track record to transforming the lives of others.</p>
 
-			<p>She has been invited to many prestigious platforms as a motivational speaker and address any topic that is given to her</p>
+			<p>She has been invited to many prestigious platforms as a motivational speaker and address any topic that is given to her.</p>
 		</div>
 	</aside>
+	<div ></div>
 
 	<div class="projhead">
 		<h1>Projects</h1>
@@ -43,24 +52,38 @@
 
 	<div class="projects">
 		<div class="proj">
-			<img src="img/cross.png">
-			<h6>Workshop for church leaders</h6>
+			<div class="image">
+				<img src="img/cross.png">
+			</div>
+			<div class="text-content wfcl-content">
+				<h6>Workshop for church leaders</h6>
 			<p>This workshop was to empower leadership on how to come into rest or peace by controlling their emotions and thoughts.</p>
+			</div>
 		</div>
 		<div class="proj">
-			<img src="img/meditation.png">
-			<h6>Self-Mastery Class</h6>
-			<p>This workshop was to guide individual from different professional background on how to control their thoughts, emotions and perception.</p>
+			<div class="image"><img src="img/confi.png"></div>
+			<div class="text-content smc-content">
+				<h6>Self-Mastery Class</h6>
+			<p class="smc-text">This workshop was to guide individual from different professional background on how to control their thoughts, emotions and perception.</p>
+			</div>
 		</div>
 		<div class="proj">
-			<img src="img/fingers.png">
-			<h6>Mental Health Care Workshop</h6>
+			<div class="image">
+				<img src="img/fingers.png">
+			</div>
+			<div class="text-content mhcw-content">
+				<h6 class="mhcw">Mental Health Care Workshop</h6>
 			<p>This workshop empowered the youth to understand how thoughts and emotions originate and how to make correct decisions.</p>
+			</div>
 		</div>
-		<div class="proj">
-			<img src="img/brain.png">
-			<h6>Feed Your Mind Well</h6>
+		<div class="proj brain">
+			<div class="image">
+				<img src="img/brain.png">
+			</div>
+			<div  class="text-content">
+				<h6 class="fymw-text">Feed Your Mind Well</h6>
 			<p>This workshop empowered individuals to understand that food is information, and how you ea affects your decisions and habits.</p>
+			</div>
 		</div>
 	</div>
 
@@ -116,6 +139,27 @@ function linkedin() {
   console.log("hi");
 }
 
+
+window.addEventListener("scroll", function(event) {
+    var top = window.scrollY,
+        left =this.scrollX;
+        console.log(top);
+        console.log("top");
+
+        //var horizontalScroll = document.querySelector(".horizontalScroll"),
+        //verticalScroll = document.querySelector(".verticalScroll");
+    
+    //horizontalScroll.innerHTML = "Scroll X: " + left + "px";
+      //verticalScroll.innerHTML = "Scroll Y: " + top + "px";
+
+   if(top > 150) {
+      var floating = document.querySelector(".floating-container");
+      floating.style.display = "block";
+   }
+   else {
+      floating.style.display = "none";
+   }
+}, false);
 
 </script>
 
