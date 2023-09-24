@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/carousel.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet"/>
+	<script src="js/script.js" defer></script>
+	<title>QBN</title>
+</head>
+<body>
+
+	<header>
+		<img src="img/logo.png" class="logo">
+		 <ol class="menu">
+		<li onclick="Home()">Home</li>
+		<li onclick="About()">About</li>
+		<li onclick="Services()">Services</li>
+		<li  class="active" onclick="Testimony()">Testimony</li>
+		<li onclick="Contacts()">Contacts</li>
+	</ol>
+	<hr class="horizon">
+	</header>
+	<div class="testimony-content-top">
+		
+		<h1>WHAT OUR CLIENTS SAY</h1>
+		<p>We provide tangible solutions to our clients and we ensure that they receive value for their money. It gives us great joy to hear how our services influence their lives positively. Here are some of the testimonies.
+	</div>
+	<div class="container">
+      <div class="slider-wrapper">
+        <button id="prev-slide" class="slide-button material-symbols-rounded">
+          <img class="image-item" src="img/arrow-left.png" alt="img-1" />
+        </button>
+        <ul class="image-list">
+        	<div>
+        		<p class="text-item">It was a powerful session. I learnt about my thought patterns and where I come from. The session made me to realise how easily one can give away peace and power.</p>
+        		<p class="Uname">Itumeleng Mogari</p>
+        	</div>
+        	<div>
+        		<p class="text-item">Self-Mastery is very powerful. It made me see everything in a different limelight. Every session would really broaden your mind if you are open to it.</p>        		<p class="Uname">Brian Pule</p>
+        	</div>
+        	<div>
+        		<p class="text-item">The session accurately breaks down how our past, present and future have impact on out emotions. I got a better understanding to look at myself and see where I make my decisions, from my spirit or my soul or my senses.</p>
+        		<p class="Uname">Fariel Klassen</p>
+        	</div>
+        </ul>
+        <button id="next-slide" class="slide-button material-symbols-rounded">
+          <img class="image-item" src="img/arrow-right.png" alt="img-1" />
+        </button>
+      </div>
+      <div class="slider-scrollbar">
+        <div class="scrollbar-track">
+          <div class="scrollbar-thumb"></div>
+        </div>
+      </div>
+    </div>
+<footer>
+	<div>
+		<i class="fui-facebook flatico" onclick="facebook()"></i> 
+		<i class="fui-instagram flatico"  onclick="instagram()"></i> 
+		<i class="fui-linkedin flatico"  onclick="linkedin()"></i>
+	</div>
+	<div>
+		QBN Consultancy Copyright © 2023 QBN - All rights reserved || Designed By: KF Matshwi  
+	</div>
+</footer>
+
+<script type="text/javascript">
+	function Home() {
+  location.href = "index.html";
+  console.log("hi");
+}
+
+function About() {
+  location.href = "about.html";
+  console.log("hi");
+}
+
+function Services() {
+  location.href = "service.html";
+  console.log("hi");
+}
+
+function Testimony() {
+  location.href = "testimony.html";
+  console.log("hi");
+}
+
+function Contacts() {
+  location.href = "contact.html";
+  console.log("hi");
+}
+
+function facebook() {
+  location.href = "https://www.facebook.com/qbnconsultancy";
+  console.log("hi");
+}
+
+function instagram() {
+  location.href = "https://instagram.com/queennthite?igshid=OGQ5ZDc2ODk2ZA==";
+  console.log("hi");
+}
+
+function linkedin() {
+  location.href = "https://www.linkedin.com/company/qbn-consultancy/";
+  console.log("hi");
+}
+
+</script>
+</body>
+</html>
