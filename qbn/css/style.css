@@ -133,21 +133,16 @@ s
 .about-content > p {
 	margin-bottom: 5%;
 }
-.top-right-content{
-	width: fit-content;
-	float: right;
-	margin-right: 6%;
-}
 
 .top-right-content div{
-	padding-right: 2px !important;
+	display: inline-block;
 	margin-top: 0px;
-	width: 30rem;
+	margin-left: 5%;
 }
 
 .SCTI{
 	margin-left: 10%;
-	width: fit-content;
+	text-align: center;
 }
 .service-content-top{
 	margin-top: 5%;
@@ -160,18 +155,21 @@ s
 	height: 70vh;
 }
 .servicing{
-	float: right;
 	margin-right: 3%;
-	width: fit-content;
 	margin-top: 15%;
+	text-align: center;
 }
 
 .bottom-left-content{
-	margin-left: 11%;
+	display: inline-block;
 	padding-top: 1%;
 	margin-bottom: 0px;
-	width: fit-content;
 }
+.bottom-left-content div{
+	display: inline-block;
+	margin-left: 2%;
+}
+
 .testimony-content-top{
 	text-align: center;
 	margin-top: 5%;
@@ -430,8 +428,9 @@ footer{
 
 .mindmap{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 30%;
 	text-align: center;
+	margin-left: 5%;
 }
 
 .mindmap h6{
@@ -440,31 +439,31 @@ footer{
 
 .ptrack{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 30%;
 	text-align: center;
 }
 
 .selfmodel{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 20%;
 	text-align: center;
 }
 
 .workplace{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 30%;
 	text-align: center;
 }
 
 .financial{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 30%;
 	text-align: center;
 }
 
 .personal{
 	box-shadow: 0 10px 25px -5px #C99047;
-	width: 50%;
+	width: 30%;
 	text-align: center;
 }
 
