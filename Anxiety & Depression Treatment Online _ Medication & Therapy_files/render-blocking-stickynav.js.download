@@ -1,0 +1,265 @@
+(function($) {
+$(document).ready(function(){
+
+	// NAV FUNCTIONALITY
+	// adjust main nav bar styling on scroll 
+	$(window).scroll(function() { 
+		var height = $(window).scrollTop(); 
+		if(height > 50) {			
+			$('.navbar').addClass('sticky');
+		} else {
+			$(".navbar").removeClass('sticky');
+		}
+	}); 
+
+	// // adjust main nav bar styling on hover 
+	// $(document).on('mouseover', '.navbar, .bs-canvas', function(){
+	// 	var height = $(window).scrollTop();
+	//     //if(height < 50) {
+	// 		$(".navbar").addClass('sticky');	
+	// 	//}				
+	// });
+
+	// $(document).on('mouseleave', '.bs-canvas', function(){
+	// 	var height = $(window).scrollTop();
+	//     if(height < 50) {
+	//     	$(".navbar").removeClass('sticky');
+	// 	}
+	// });		
+
+	// PRIMARY MENUS
+	// open main menu modals on hover
+	$(document).on('click mouseover', '.pull-bs-canvas-left', function() {		
+	    var datatarget = $(this).attr("data-target");
+	    var menutarget = $("body").find('#' + datatarget);
+	    setTimeout(function(){
+			$('.bs-canvas').removeClass('active');
+			menutarget.addClass('active');
+	   	}, 100);	    
+
+	    // Add backdrop
+		if ($('.bs-canvas-overlay').length === 0) {
+			var overlay = $('<div class="bs-canvas-overlay background-sapphire-dark position-fixed w-100 h-100"></div>');
+			$('body').prepend(overlay);
+			overlay.show( 300 );
+		}	    		
+		event.preventDefault();	
+	});	
+
+	// SECONDARY MENUS
+	// open secondary menus on hover
+	$(document).on('click mouseover', '.pull-bs-canvas-left-secondary', function(){	
+	    var datatarget = $(this).attr("data-target");
+	    var menutarget = $("body").find('#' + datatarget);
+		$(".bs-canvas-left-secondary").removeClass('active');
+	    menutarget.addClass('active');
+	    event.preventDefault();
+	});	
+
+	// close secondary menus when hovering off
+	$(document).on('mouseleave', '.bs-canvas-left-secondary', function(){
+	    $(".bs-canvas-left-secondary").removeClass('active');
+	});	
+	
+	// remove menus if stuck open too long (KILLSWITCH)
+	$(document).on('mouseleave', '#navtest1, .pull-bs-canvas-left, .bs-canvas', function() {	
+		if ($('.bs-canvas-overlay').length === 0) {
+		    setTimeout(function(){
+			    $('.bs-canvas').removeClass('active');
+		   	}, 300);
+		}	 
+	});
+
+	// remove menus/backdrop on any page scroll (KILLSWITCH)
+	if($(window).width() > 768) {
+		$(window).on('scroll', function() {
+    		$(".bs-canvas").removeClass('active');
+		});
+	}	
+
+	// remove menus/backdrop when leaving screen (KILLSWITCH)
+	$(document).on('mouseleave', function() {
+    	$(".bs-canvas").removeClass('active');
+	});	
+
+	// remove menus/backdrop on hover/click
+	$(document).on('click mouseover', '.bs-canvas-close, .bs-canvas-overlay', function(){
+		var elm = $(this).hasClass('bs-canvas-close') ? $(this).closest('.bs-canvas') : $('.bs-canvas');
+		var overlay = $('.bs-canvas-overlay');
+		elm.removeClass('ml-0 active');
+		overlay.fadeOut(300, function(){ $(this).remove();});
+		return false;
+	});
+
+	// add active class for modal menu links
+	$(function(){
+	    var current = location.pathname;
+	    $('.bs-canvas .bs-canvas-content a').each(function(){
+	        var $this = $(this);
+	        // make active if current page
+	        if($this.attr('href') === current){
+	            $this.addClass('active');
+	        }
+	    })
+	})
+
+	// mobile: show/hide on click back
+	$(document).on('click', '.navMenu-back', function(){	
+	    var datatarget = $(this).attr("data-target");
+	    var menutarget = $("body").find('#' + datatarget);
+		$('.bs-canvas').removeClass('active');
+	    setTimeout(function(){
+			menutarget.addClass('active');
+	    }, 200);	 	
+		event.preventDefault();		    	
+	});		
+
+	// mobile: close primary menus on secondary menu open
+	if($(window).width() < 768) {
+		$(document).on('click', '.pull-bs-canvas-left-secondary', function(){	
+			$('.bs-canvas-left-primary').removeClass('active');
+		});	
+	}
+
+	// Update blog nav styling on scroll 
+	if($(window).width() > 769) {
+		$(window).scroll(function() { 
+			var height = $(window).scrollTop(); 
+			if (height > 90) {
+				$("#navbar-blog").css({"position": "fixed","top": "0"});
+			} else {
+				$("#navbar-blog").css({"position": "relative","top": "90px"});
+			}
+		});
+	} 
+
+	// Smooth Scroll anchor links
+	jQuery(function($){
+	    function scrollNav() {
+	      $('a.smoothscroll').click(function(){  
+	        $('html, body').stop().animate({
+	            scrollTop: $( $(this).attr('href') ).offset().top - 40
+	        }, 800);
+	        return false;
+	      });
+	    }
+	    scrollNav();
+	}); 
+
+	// Back to top link
+	var away = false;
+    $('.to-top').click(function() {
+        $("html, body").animate({scrollTop: 0}, 400);
+    });
+
+	$(window).scroll(function() { 
+		var height = $(window).scrollTop(); 
+		if(height > 70) {
+			$(".to-top").css({"opacity": "1"});
+		} else {
+			$(".to-top").css({"opacity": "0"});
+		}
+	}); 
+
+	// PAGE-SPECIFIC STYLES - REMOVED 05/25
+	// // separate class for dropdown caret since javascript can't control pseudo elements :(
+	// if( $('body.page-careers, body.page-partners, body.page-health-systems, body.page-health-plans, body.page-medical-groups, body.page-scorecard').length ) {
+	// 	$(".dropdown-toggle").addClass('dropdown-toggle-white');
+	// }	
+
+	// // Update nav styles on scroll (dark hero BG vs light hero BG)
+	// /* Careers */
+	// if( $('body.page-careers, body.page-clinicians').length ) {
+
+	// 	// New Nav
+	// 	// logo on hover on
+	// 	$(document).on('mouseover', '#navtest1, .bs-canvas', function(){
+	// 		$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-logo.svg");
+	// 		$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-dark.svg");
+	// 	});
+
+	// 	// logo on hover off
+	// 	$(document).on('mouseleave', '.bs-canvas', function(){
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height < 50) {
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-logo-white.svg");
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-white.svg");
+	// 		}
+	// 	});	
+
+	// 	// Original Nav
+	// 	$(window).scroll(function() { 
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height > 50) {
+	// 			$(".navbar").addClass('sticky');
+	// 			$(".navbar ul li a").css("color", "#2E4985");
+	// 			$(".dropdown-toggle").css("content", "url(../assets/caret-white.svg)!important");
+	// 			//$(".menu-item-search").css("background-image", "url('/wp-content/themes/brightside-v4/assets/search.svg')");		
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-dark.svg");
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-logo.svg");	
+	// 			// separate class for dropdown caret since javascript can't control pseudo elements :( 
+	// 			$(".dropdown-toggle").removeClass('dropdown-toggle-white');
+	// 		} else {
+	// 			$(".navbar").removeClass('sticky');
+	// 			$(".navbar ul li a").css("color", "#FFFFFF");
+	// 			//$(".menu-item-search").css("background-image", "url('https://www.brightside.com/wp-content/themes/brightside-v4/assets/search-white.svg')");				
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-white.svg");
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-logo-white.svg");
+	// 			$(".modal-header .navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-logo.svg");	
+	// 			// separate class for dropdown caret since javascript can't control pseudo elements :( 
+	// 			$(".dropdown-toggle").addClass('dropdown-toggle-white');			
+	// 		}
+	// 	}); 
+
+	// /* Partners */
+	// } else if( $('body.page-partners, body.page-health-systems, body.page-health-plans, body.page-medical-groups, body.page-scorecard').length ) {
+
+	// 	// New Nav
+	// 	// logo on hover on
+	// 	$(document).on('mouseover', '#navtest1, .bs-canvas', function(){
+	// 		$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-partners-logo.svg");
+	// 		$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-dark.svg");
+	// 	});
+
+	// 	// logo on hover off
+	// 	$(document).on('mouseleave', '.bs-canvas', function(){
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height < 50) {
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-partners-logo-white.svg");
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-white.svg");
+	// 		}
+	// 	});	
+
+	// 	$(window).scroll(function() { 
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height > 50) {
+	// 			$(".navbar").addClass('sticky');
+	// 			$(".dropdown-toggle").css("content", "url(../assets/caret-white.svg)!important");
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-dark.svg");
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-partners-logo.svg");	
+	// 			// separate class for dropdown caret since javascript can't control pseudo elements :( 
+	// 			$(".dropdown-toggle").removeClass('dropdown-toggle-white');
+	// 		} else {
+	// 			$(".navbar").removeClass('sticky');
+	// 			$(".navbar-toggler img").attr("src","/wp-content/themes/brightside-v4/assets/navIcon-white.svg");
+	// 			$(".navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-partners-logo-white.svg");
+	// 			$(".modal-header .navbar-brand img").attr("src","/wp-content/themes/brightside-v4/assets/brightside-health-partners-logo.svg");	
+	// 			// separate class for dropdown caret since javascript can't control pseudo elements :( 
+	// 			$(".dropdown-toggle").addClass('dropdown-toggle-white');			
+	// 		}
+	// 	}); 
+
+	// /* Regular light BG */	
+	// } else {
+	// 	$(window).scroll(function() { 
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height > 50) {			
+	// 			$('.navbar').addClass('sticky');
+	// 		} else {
+	// 			$(".navbar").removeClass('sticky');
+	// 		}
+	// 	}); 		
+	// }
+	
+});
+})(jQuery);

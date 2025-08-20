@@ -1,0 +1,52 @@
+// Close popups on click
+jQuery(document).ready(function(){   
+
+    // Popup Bars
+    $('.cta-popup .popup-close').on('click', function(event) {        
+        $('.cta-popup').fadeToggle(200);
+    });  
+
+    // Main Nav
+    $('#search-popup .popup-close').on('click', function(event) {        
+        $('#search-popup').fadeToggle();
+    });        
+
+    $('.menu-item-search').on('click', function(event) {        
+        $('#search-popup').fadeToggle();
+    });  
+
+}); 
+
+// Set cookie/styling for CTA popup close
+$(document).ready(function(){
+
+    // Set the cookie (1 day)
+    $(".cta-popup .popup-close").click(function() {
+        Cookies.set('cta-popup-closed', 'true', { expires: 1 });
+        // adjust spacing
+        $("body").removeClass( "cta-popup-open-top cta-popup-open-bottom" );
+    });    
+
+    // Show if no cookie detected
+    var myCookie = Cookies.get("cta-popup-closed");
+    if (myCookie != "true") {
+
+        // check if popup exists
+        if ($('.cta-popup').length) {
+
+            // set top / bottom placement
+            if (window.location.href.indexOf("/partners/") != -1) {
+                $("body").addClass( "cta-popup-open-bottom" );
+            } else {
+                $("body").addClass( "cta-popup-open-top" );
+            }
+
+            // show said popup
+            $('.cta-popup').css("display", "block");
+        }    
+
+    } else {
+        $("body").removeClass( "cta-popup-open-top cta-popup-open-bottom" );
+    };     
+
+});

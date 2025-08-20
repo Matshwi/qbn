@@ -1,0 +1,37 @@
+$(document).ready(function(){
+
+  // Helper function to safely track events
+  function trackEvent(eventName, properties, options) {
+    // Use adapter if available, fallback to direct Segment
+    if (window.analyticsAdapter) {
+      window.analyticsAdapter.track(eventName, properties, options);
+    } else if (typeof analytics !== 'undefined') {
+      analytics.track(eventName, properties, options);
+    }
+  }
+
+  // Detect Decagon chatbot interactions
+  if (window.duet) {
+    window.duet.setEventListener((event) => {
+
+      // get event mapping
+      const eventMapping = {
+        'DECAGON_LOADED': 'Chat Widget Shown',
+        'DUET_INITIALIZE': 'Chat Widget Opened',
+        'DUET_DEINITIALIZE': 'Chat Widget Closed',
+        'DUET_USER_INPUT': 'Chat Input Started',
+        'DUET_USER_SEND': 'Chat Message Sent',
+        'DUET_RESPONSE': 'Chat Bot Responded'
+      };
+
+      const eventName = eventMapping[event.eventName];
+
+      if (eventName) {
+        trackEvent(eventName, {
+          decagon_event_type: event.eventName
+        });
+      }
+    });
+  }
+
+});

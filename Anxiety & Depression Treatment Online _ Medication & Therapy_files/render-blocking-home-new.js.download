@@ -1,0 +1,177 @@
+$(document).ready(function(){	
+
+	// Swap header CTA content on page load
+	$("#cta-primarynav").css("display", "block");	
+
+	// Update nav styles on scroll (dual CTA variants) - hide due to new nav (07/2023)
+
+	// if( $('body.page-dual-CTA').length ) {
+	// 	$("#cta-primarynav").text("Free Assessment");	
+	// 	$(window).scroll(function() { 
+	// 		var height = $(window).scrollTop(); 
+	// 		if(height  > 50) {
+	// 			$(".cta-primarynav a").css("background-color", "#ACE2E4");
+	// 		} else {
+	// 			$(".cta-primarynav a").css("background-color", "#FFF");			
+	// 		}
+	// 	}); 
+	// }	
+
+	// CountUp animations
+	var a = 0;
+	$(window).scroll(function() {
+
+	  var oTop = $('.counter').offset().top - window.innerHeight;
+	  if (a == 0 && $(window).scrollTop() > oTop) {
+	    $('.counter-number').each(function() {
+	      var $this = $(this),
+	        countTo = $this.attr('data-count');
+	      $({
+	        countNum: $this.text()
+	      }).animate({
+	          countNum: countTo
+	        },
+
+	        {
+	          duration: 1100,
+	          easing: 'swing',
+	          step: function() {
+	            $this.text(Math.floor(this.countNum));
+	          },
+	          complete: function() {
+	            $this.text(this.countNum);
+	            //alert('finished');
+	          }
+
+	        });
+	    });
+	    a = 1;
+	  }
+
+	});
+
+    // Reviews rotator
+    $('.reviewSlider').slick({
+		infinite: false,
+		arrows: false,
+		dots: true,
+		slidesToShow: 3,
+		responsive: [
+			{
+			  breakpoint: 1500,
+			  settings: {
+				slidesToShow: 2,
+			  }
+			},
+			{
+			  breakpoint: 767,
+			  settings: {
+				slidesToShow: 1,
+				centerMode: true,
+				centerPadding: '40px',
+			  }
+			}
+		  ]		
+	});		
+
+	// Phone Screens rotator desktop
+	$('.howitworksSlider-desktop').slick({
+		infinite: true,
+		arrows: false,
+		dots: false,
+		speed: 300,		
+		fade: true,		
+		centerMode: false,
+		slidesToShow: 1,	
+		autoplay: true,
+  		autoplaySpeed: 4000,
+  		pauseOnFocus: false,
+  		pauseOnHover: false	
+	});	
+
+	// Click to rotate Phone Screens rotator
+	 $('a[data-slide]').click(function(e) {
+	   e.preventDefault();
+	   var slideno = $(this).data('slide');
+	   $('.howitworksSlider-desktop').slick('slickGoTo', slideno - 1);
+	 });
+
+	// Phone Screens rotator mobile
+	$('.howitworksSlider-mobile').slick({
+		infinite: true,
+		arrows: false,
+		dots: false,
+		speed: 300,		
+		fade: true,		
+		centerMode: false,
+		slidesToShow: 1,	
+		autoplay: true,
+  		autoplaySpeed: 4000,
+  		pauseOnFocus: false,
+  		pauseOnHover: false	
+	});		
+
+	// Check to see if rotator is in view
+	// function triggerScroll(targetObj) {
+	//     let targetName = targetObj.attr("id"); //for console.log
+	//     let targetFlag = false;
+	//     let scrollTop = $(window).scrollTop();
+	//     let scrollBottom = scrollTop + $(window).height();
+	//     let targetTop = targetObj.offset().top;
+	//     let targetBottom = targetTop + targetObj.height();
+	// 　　// while loading
+	//     if (scrollBottom > targetTop && scrollTop < targetBottom) {
+	//         if (!targetFlag) {
+	//             //console.log(targetName + ' is in sight'); //for console.log
+	//             targetObj.slick('slickPlay');
+	//             targetFlag = true;
+	//         }
+	//     } else {
+	//             //console.log(targetName + ' is not in sight'); //for console.log
+	//             targetObj.slick('slickPause');
+	//             targetFlag = false;
+	//     }
+
+	//     $(window).on('scroll', function () {
+	//         scrollTop = $(window).scrollTop();
+	//         scrollBottom = scrollTop + $(window).height();
+	//         targetTop = targetObj.offset().top;
+	//         targetBottom = targetTop + targetObj.height();
+	//         if (scrollBottom > targetTop && scrollTop < targetBottom) {
+	//             // Start autoplay when entering the viewport
+	//             if (!targetFlag) {
+	//                 //console.log(targetName + ' is in sight'); //for console.log
+	//                 targetObj.slick('slickPlay');
+	//                 targetFlag = true;
+	//             }
+	//         } else {
+	//             // Stop autoplay when you get out of the viewport
+	//             if (targetFlag) {
+	//                 //console.log(targetName + ' is not in sight'); //for console.log
+	//                 targetObj.slick('slickPause');
+	//                 targetFlag = false;
+	//             }
+	//         }
+	//     });
+	// }
+
+    // Video modals 
+    
+    // Get the video src
+    var $videoSrc = $("#brandvideo").attr( "src" );
+
+    // when the modal is opened autoplay it  
+    $('#brandvideoModal').on('shown.bs.modal', function (e) {
+        // set the video src to autoplay and not to show related video. Youtube related video is like a box of chocolates... you never know what you're gonna get
+        $("#brandvideo").attr('src',$videoSrc + "&autoplay=1&texttrack=en" ); 
+    })
+    // stop playing the youtube video when I close the modal
+    $('#brandvideoModal').on('hide.bs.modal', function (e) {
+        // a poor man's stop video
+        $("#brandvideo").attr('src',''); 
+    })		
+	
+	// AOS Initialize
+	AOS.init();		
+	
+});    

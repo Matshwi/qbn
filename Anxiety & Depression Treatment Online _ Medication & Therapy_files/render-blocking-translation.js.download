@@ -1,0 +1,96 @@
+$(document).ready(function(){	
+
+    // Adjust URLs based on parent language
+	if( $('body.page-translation').length ) {	
+
+		// get parent URL
+		var currenturl = window.location.href;
+		var currentparent = currenturl.split('/')[3];
+		
+		// adjust legal URLs
+	   	$('a[href$="/tou/"]').attr('href', window.location.origin + "/" + currentparent + "/tou/");
+	   	$('a[href$="/privacy/"]').attr('href', window.location.origin + "/" + currentparent + "/privacy/");
+	   	$('a[href$="/telehealth/"]').attr('href', window.location.origin + "/" + currentparent + "/telehealth/");
+	   	$('a[href$="/npp/"]').attr('href', window.location.origin + "/" + currentparent + "/npp/");
+	   	$('a[href$="/member-rights-and-responsibilities/"]').attr('href', window.location.origin + "/" + currentparent + "/member-rights-and-responsibilities/");
+	   	$('a[href$="/notice-non-discrimination/"]').attr('href', window.location.origin + "/" + currentparent + "/notice-non-discrimination/");	   		 
+
+	   	// add language UTMs to all CTAs
+	   	$('a[id^="cta"][href*="app"]').attr(
+	        "href", function(i) { return $(this).attr("href") + "?lang=" + currentparent
+	    }); 
+
+	}	    
+
+    // navigate to page based on language dropdown
+    if($(window).width() < 769) {
+		$('#languageform2').on( 'change', function() {
+		//$('.navbar').find('.navbar-dropdown:visible').each('#languageform').change(function(){
+			// route URL based on selection
+			var url = $('#language2').val();
+			if (url) { 
+				window.location.assign(url);
+			}
+			return false;
+		});
+	} else {
+		$('#languageform1').on( 'change', function() {
+		//$('.navbar').find('.navbar-dropdown:visible').each('#languageform').change(function(){
+			// route URL based on selection
+			var url = $('#language1').val();
+			if (url) { 
+				window.location.assign(url);
+			}
+			return false;
+		});		
+	}
+
+// $(".navbar-dropdown:not([style*='display: none'])").each(function(){
+
+// 	$('#languageform').change(function(){
+// 		// route URL based on selection
+// 		var url = $('#language').val();
+// 		if (url) { 
+// 			window.location.assign(url);
+// 		}
+// 		return false;
+// 	});
+
+// });
+
+	// set default language dropdown based on page 
+	if (window.location.href.indexOf("/ar/") != -1) {
+		$("#language1,#language2").prop('selectedIndex', 1); 
+	} else if (window.location.href.indexOf("/zh-yue/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 2); 
+	} else if (window.location.href.indexOf("/zh-cn/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 3); 
+	} else if (window.location.href.indexOf("/fa/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 4); 
+	} else if (window.location.href.indexOf("/fr/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 5); 
+	} else if (window.location.href.indexOf("/ht/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 6); 
+	} else if (window.location.href.indexOf("/de/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 7); 
+	} else if (window.location.href.indexOf("/it/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 8); 
+	} else if (window.location.href.indexOf("/ja/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 9); 
+	} else if (window.location.href.indexOf("/ko/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 10); 
+	} else if (window.location.href.indexOf("/pl/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 11); 
+	} else if (window.location.href.indexOf("/pt/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 12); 
+	} else if (window.location.href.indexOf("/ru/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 13); 
+	} else if (window.location.href.indexOf("/es/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 14); 
+	} else if (window.location.href.indexOf("/tl/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 15); 
+	} else if (window.location.href.indexOf("/vi/") != -1) { 
+		$("#language1,#language2").prop('selectedIndex', 16); 
+	}		
+	
+});    

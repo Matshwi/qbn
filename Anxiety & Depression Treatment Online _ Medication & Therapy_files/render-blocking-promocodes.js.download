@@ -1,0 +1,72 @@
+// All promo code functions
+$(document).ready(function(){
+
+    // Add button UTM strings to all CTAs based on current URL   
+    if (window.location.href.indexOf("button=") != -1) {
+        
+        const url = window.location.search;
+        const urlParams = new URLSearchParams(url);
+        const promoCode = urlParams.get('button')
+
+        $('a[id^="cta"][href*="app"]').attr(
+            "href", function(i) { return $(this).attr("href") + "?button=" + promoCode
+        }); 
+    } 
+
+    // Add promo code UTM strings to all CTAs based on current URL   
+    if (window.location.href.indexOf("promo=") != -1) {
+        
+        const url = window.location.search;
+        const urlParams = new URLSearchParams(url);
+        const promoCode = urlParams.get('promo')
+
+        $('a[id^="cta"][href*="app"]').attr(
+            "href", function(i) { return $(this).attr("href") + "?promo=" + promoCode.toUpperCase()
+        }); 
+    }
+
+    // Add provider referral UTM strings to all CTAs based on current URL   
+    if (window.location.href.indexOf("rid=") != -1) {
+        
+        const url = window.location.search;
+        const urlParams = new URLSearchParams(url);
+        const promoCode = urlParams.get('rid')
+
+        $('a[id^="cta"][href*="app"]').attr(
+            "href", function(i) { return $(this).attr("href") + "?rid=" + promoCode
+        }); 
+    }  
+
+    // Add guest token UTM strings to all CTAs based on current URL
+    if (window.location.href.indexOf("guest_token=") != -1) {
+        
+        const url = window.location.search;
+        const urlParams = new URLSearchParams(url);
+        const promoCode = urlParams.get('guest_token')
+
+        $('a[id^="cta"][href*="app"]').attr(
+            "href", function(i) { return $(this).attr("href") + "?guest_token=" + promoCode
+        }); 
+    }   
+
+    // Add entity UTM strings to all CTAs based on current URL (HCA only for now)
+    if (window.location.href.indexOf("/hca") != -1) {
+
+        // check if UTM exists
+        if (window.location.href.indexOf("entity=") != -1) {
+            
+            const url = window.location.search;
+            const urlParams = new URLSearchParams(url);
+            const promoCode = urlParams.get('entity')
+
+            $('a[id^="cta"][href*="app"]').attr(
+                "href", function(i) { return $(this).attr("href") + "?entity=" + promoCode 
+            });
+        } else {
+            $('a[id^="cta"][href*="app"]').attr(
+                "href", function(i) { return $(this).attr("href") + "?entity=hca"; 
+            });
+        }  
+    }
+
+});

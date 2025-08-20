@@ -1,0 +1,27 @@
+$(document).ready(function(){	
+
+	// GEOLOCATION
+	const $ipKey = '47fe18ba9e695953f9f0556d66dfff18';
+	const $ipUrl = 'https://api.ipstack.com/';
+
+	$.getJSON($ipUrl+"check?access_key="+$ipKey, function(data) {
+
+		// grab data as variables
+		var $ipState = data.region_name;
+		var $ipCity = data.city;		
+
+	  	// Add shortcodes for content 
+	  	$(".city, .state").css("display", "inline");
+	  	$(".city").html($ipCity);
+		$(".state").html($ipState);
+
+		// // Swap CTA popup bar content
+		// if ($ipState == 'Texas' || $ipState == 'Florida' || $ipState == 'Arizona' || $ipState == 'Michigan' || $ipState == 'Missouri' ||
+		// 	$ipState == 'Colorado' || $ipState == 'Delaware' || $ipState == 'Iowa' || $ipState == 'Utah') {
+	  	// 	$(".cta-desktop").html('<p>We now offer Teen Care in ' + $ipState + ' <a id="cta-popupbar" title="Check coverage" href="https://app.brightside.com/intake?button=teen-banner">Check coverage</a></p><button type="button" class="popup-close" aria-label="Close">X</button>');
+	  	// 	$(".cta-mobile").html('<p>We now offer Teen Care in ' + $ipState + '<br><a id="cta-popupbar" title="Check coverage" href="https://app.brightside.com/intake?button=teen-banner">Check coverage</a></p><button type="button" class="popup-close" aria-label="Close">X</button>');
+	  	// }
+	  	
+	})
+	
+});    

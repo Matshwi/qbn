@@ -1,0 +1,29 @@
+
+/*
+Theme Name: Brightside v4
+Theme URI: https://brightside.com
+Author: Brightside
+Description: This Theme has been designed and developed exclusively for Brightside. Any unauthorized reproduction is prohibited.
+Version: 4.0
+ 
+====================
+
+Brightside CSS Theme Overrides 
+Enter CSS Styles below to over ride the existing themes CSS styles
+
+*/
+
+/* Breakpoint XL */
+@media screen and (min-width: 1200px) {}
+
+/* Breakpoint LG */
+@media screen and (min-width: 992px) and (max-width: 1199px) {}
+
+/* Breakpoint MD */
+@media screen and (min-width: 768px) and (max-width: 991px) {}
+
+/* Breakpoint SM */
+@media screen and (max-width: 767px) {}
+
+/* Breakpoint XS */
+@media screen and (max-width: 575px) {}

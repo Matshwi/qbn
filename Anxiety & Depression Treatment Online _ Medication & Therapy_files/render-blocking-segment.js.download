@@ -1,0 +1,699 @@
+try {
+	jQuery(document).ready(function () {
+		var $ = jQuery;
+
+		// Wait for analytics adapter to be ready
+		if (window.analyticsAdapter) {
+			window.analyticsAdapter.initialize().then(function() {
+				console.log('Analytics adapter initialized');
+			}).catch(function(error) {
+				console.error('Failed to initialize analytics adapter:', error);
+			});
+		}
+
+		// Helper function to safely track events
+		function trackEvent(eventName, properties, options) {
+			// Use adapter if available, fallback to direct Segment
+			if (window.analyticsAdapter) {
+				window.analyticsAdapter.track(eventName, properties, options);
+			} else if (typeof analytics !== 'undefined') {
+				analytics.track(eventName, properties, options);
+			}
+		}
+
+		// Helper function to safely identify users
+		function identifyUser(userId, traits, options) {
+			// Use adapter if available, fallback to direct Segment
+			if (window.analyticsAdapter) {
+				window.analyticsAdapter.identify(userId, traits, options);
+			} else if (typeof analytics !== 'undefined') {
+				if (userId) {
+					analytics.identify(userId, traits, options);
+				} else {
+					analytics.identify(traits, options);
+				}
+			}
+		}
+
+		// Detect CTA clicks
+		jQuery(document).on('click', 'a[id^="cta"]', function (event) {
+			var $element = $(event.currentTarget);
+
+			// set component location
+			if ( $(this).is("#cta-primarynav") ) {			
+				var $location = 'main-nav';
+			} else if ( $(this).is("#cta-mobilenav-1,#cta-mobilenav-2") ) {
+				var $location = 'mobile-nav';
+			} else {
+				var $location = 'body';
+			}
+
+			trackEvent('CTA Clicked', { 
+				component_id: $element.attr('id'),
+				component_location: $location,
+				component_target: $element.attr('href'), 
+				component_text: $element.text(),
+				component_trigger: 'clicked',
+				component_type: 'button',
+				page_name: 'home',
+				page_category: 'marketing'						
+			});
+		});			
+
+		// NAV - Detect all main nav item hovers
+		jQuery(document).on('mouseenter', '#navtest1.navbar ul li', function (event) {
+
+			// set component type/title
+			var linktype = 'menu-item-parent';		
+
+			trackEvent('Navigation Hovered', {				
+				component_id: $(this).attr('id'), 
+				component_target: $(this).find('a').attr('href'),
+				component_type: linktype,
+				component_location: 'main-nav',
+				component_trigger: 'hovered',
+				component_text: $(this).find('a').text(),			
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+		});	
+
+		// NAV - Detect all sidebar nav item hovers
+		if($(window).width() > 769) {
+			jQuery(document).on('mouseenter', '.bs-canvas a', function (event) {
+
+				// set component type (parent/child)
+				if ( $(this).hasClass( "pull-bs-canvas-left-secondary" ) ) {			
+					var linktype = 'menu-item-parent';
+				} else {
+					var linktype = 'menu-item';
+				}
+
+				// set component menu location (primary/secondary)
+				if ( $(this).parents('.bs-canvas-left-primary').length > 0 ) { 
+					var navmenu = 'sidebar-main-nav';
+				} else {
+					var navmenu = 'sidebar-secondary-nav';
+				}	
+
+				trackEvent('Navigation Hovered', {					
+					component_id: $(this).attr('id'), 
+					component_target: $(this).attr('href'),
+					component_type: linktype,
+					component_location: navmenu,
+					component_trigger: 'hovered',
+					component_text: $(this).text(),			
+					page_name: 'home',
+					page_category: 'marketing'
+				});
+			});	
+		}
+
+		// NAV - Detect all sidebar nav item clicks
+		jQuery(document).on('click', '.bs-canvas a', function (event) {
+
+			// set component type (parent/child)
+			if ( $(this).hasClass( "pull-bs-canvas-left-secondary" ) ) {			
+				var linktype = 'menu-item-parent';
+			} else {
+				var linktype = 'menu-item';
+			}
+
+			// set component menu location (desktop/mobile)
+			if($(window).width() < 769) {
+				var navmenu = 'mobile-nav';
+			} else {				
+				if ( $(this).parents('.bs-canvas-left-primary').length > 0 ) { 
+					var navmenu = 'sidebar-main-nav';
+				} else {
+					var navmenu = 'sidebar-secondary-nav';
+				}	
+			}
+
+			trackEvent('Navigation Clicked', {					
+				component_id: $(this).attr('id'), 
+				component_target: $(this).attr('href'),
+				component_type: linktype,
+				component_location: navmenu,
+				component_trigger: 'clicked',
+				component_text: $(this).text(),			
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+		});		
+
+		// Detect mobile nav hamburger click
+		jQuery(document).on('click', '.navbar-toggler', function (event) {
+			trackEvent('Navigation Clicked', {
+				component_target: 'mobile-menu',
+				component_type: 'menu-item-hamburger',
+				component_location: 'mobile-nav',
+				component_trigger: 'clicked',	
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+		});			
+
+		// Detect all nav parent item hovers (to be removed)
+		jQuery(document).on('mouseenter', '.navbar-nav .menu-item-has-children', function (event) {
+
+			// set component type/title
+			var linktype = 'menu-item-parent';
+			var linktextbefore = $('span')[0].previousSibling.nodeValue;
+			var linktext = linktextbefore.slice(0, -1);		
+
+			trackEvent('Navigation Hovered', {
+				component_id: $(this).attr('id'), 
+				component_target: $(this).find('a').attr('href'),
+				component_type: linktype,
+				component_location: 'main-nav',
+				component_trigger: 'hovered',
+				component_text: linktext,			
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+		});	
+
+		// Detect all nav item clicks (excludes parents) (to be modified/removed)
+		jQuery(document).on('click', '.navbar-nav .menu-item:not(".menu-item-has-children")', function (event) {
+
+			// set component menu name
+			if ( $(this).parent().is('#menu-primary-navigation') ) {
+				var navmenu = 'main-nav';
+			} else if ( $(this).parent().is('#blog-navigation') ) {
+				var navmenu = 'blog-nav';
+			} else if ( $(this).parent().is('#resource-center-navigation') ) {
+				var navmenu = 'resource-center-nav';
+			} else if ( $(this).parent().is('#menu-mobile-navigation') ) {
+				var navmenu = 'mobile-nav';
+			}
+
+			// set component type/title
+			if ( $(this).parent().hasClass('dropdown-menu') ) {
+				var linktype = 'menu-item-child';
+				var linktext = $(this).find('a').text();
+			} else {
+				var linktype = 'menu-item';
+				var linktext = $(this).find('a').text();
+			}			
+
+			trackEvent('Navigation Clicked', {
+				component_id: $(this).attr('id'), 
+				component_target: $(this).find('a').attr('href'),
+				component_type: linktype,
+				component_location: navmenu,
+				component_trigger: 'clicked',
+				component_text: linktext,			
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+		});		
+
+		// Detect if sections are scrolled into view
+		$(window).scroll(function(){
+			var $sections = $('section:not(.section-viewed)');
+			function elementInView(elem) {
+				var $element = $(elem);
+				var docViewTop = $(window).scrollTop();
+				var docViewBottom = docViewTop + $(window).height();
+				var elemTop = $element.offset().top + $element.height() * 0.5;
+				return ((elemTop <= docViewBottom) && (elemTop >= docViewTop));
+			}
+
+			// Send data to analytics
+			$.each($sections, function (index, section){
+				if (elementInView(section)) {
+					var $currentSection = $(section);
+					$currentSection.addClass('section-viewed');
+					trackEvent('Section Viewed', { 
+						sectionId: $currentSection.attr('id')
+					});
+				}
+			});  
+		});
+
+		// Detect hero dropdown click
+		jQuery(document).on('submit', '#heroform', function (event) {
+			trackEvent('CTA Clicked', {
+				component_trigger: 'submit',
+				component_location: 'body',
+				component_type: 'dropdown',
+				component_target: $("#route").val(), 
+				component_id: $(this).attr('id'),
+				component_text: $("#route-button").val(),
+				page_name: 'home',
+				page_category: 'marketing'
+			});
+
+			// route URL based on selection
+	        var url = $('#route').val();
+	        if (url) { 
+	        	window.location.assign(url);
+	        }
+	        return false;
+		});			
+
+		// Detect in-content accordion click
+		jQuery(document).on('click', '.card-header', function (event) {
+			var $element = $(event.currentTarget);
+			trackEvent('Clicked', { 
+				accordionId: $element.attr('id'),
+			});
+		});
+
+		// Detect modal window opens (videos, forms, etc)
+		jQuery(document).on('click', '.btn-modal', function (event) {
+			if ($(this).data('target')) {
+				var $element = $(event.currentTarget);
+				trackEvent('Modal Window Opened', { 
+					modalId: $element.attr('data-target')
+				});
+			}
+		});
+
+		// Detect embedded video interactions (Careers)
+		if( $('body.page-brand-campaign').length || $('body.page-clinicians').length ) {
+
+			// check if Vimeo player is loaded
+			var vimeo = $('script[src*="https://player.vimeo.com/api/"]').length; 
+
+			if (vimeo > 0) {
+				var iframe = document.querySelector('.videoEmbed');
+				var player = new Vimeo.Player(iframe);
+
+				// set global video variables
+				let videoid = sessionStorage.getItem('videoID');
+				if (videoid == null) {
+				    player.getVideoId().then(function(id) {
+				        sessionStorage.setItem('videoID', id);
+				        let videoid = sessionStorage.getItem('videoID');
+				    });   
+				}	
+
+				let videoduration = sessionStorage.getItem('videoDuration');
+				if (videoduration == null) {
+				    player.getDuration().then(function(duration) {
+				        sessionStorage.setItem('videoDuration', duration);
+				        let videoduration = sessionStorage.getItem('videoDuration');
+				    });   
+				}			
+
+				// play 
+				player.on('play', function(data) {
+
+					// variables
+					let videoid = sessionStorage.getItem('videoID');
+					let videoduration = sessionStorage.getItem('videoDuration');				
+
+					// set video current time
+				    player.getCurrentTime().then(function(current) {
+				        sessionStorage.setItem('videoCurrentTime', current);
+				        let videocurrent = sessionStorage.getItem('videoCurrentTime');
+					
+						trackEvent('Video Playback Started', { 
+						    video_id: videoid,
+						    video_location: window.location.href,
+						    video_start_position: videocurrent,
+						    video_total_length: videoduration,
+						    video_watch_duration: "0"	    
+						});
+				    });  		
+
+				});
+
+				// pause
+				player.on('pause', function(data) {
+
+					// variables
+					let videoid = sessionStorage.getItem('videoID');
+					let videoduration = sessionStorage.getItem('videoDuration');
+
+					// set video current time
+				    player.getCurrentTime().then(function(current) {
+				        sessionStorage.setItem('videoCurrentTime', current);
+				        let videocurrent = sessionStorage.getItem('videoCurrentTime');
+
+						trackEvent('Video Playback Exited', { 
+						    video_id: videoid,
+						    video_location: window.location.href,
+						    video_total_length: videoduration,
+						    video_watch_duration: videocurrent
+						});
+				    }); 		
+		        
+				});					
+
+				// end
+				player.on('ended', function(data) {
+
+					// variables
+					let videoid = sessionStorage.getItem('videoID');
+					let videoduration = sessionStorage.getItem('videoDuration');		    
+
+					trackEvent('Video Playback Completed', { 
+					    video_id: videoid,
+					    video_location: window.location.href,
+					    video_total_length: videoduration,
+					    video_watch_duration: videoduration
+					});
+				});			
+
+			} else {
+			    /* do nothing */
+			}
+		}
+
+		// Detect embedded survey interactions (Conditions)
+		if( $('body.page-template-page-conditions-survey').length ) {  
+			var monitor = setInterval(function() {
+		    var elem = document.activeElement;
+		    if(elem && elem.tagName == 'IFRAME') {
+		        clearInterval(monitor);
+		        trackEvent("Survey Clicked", {
+					component_name: $('#frontHeader .subheader-caps-medium').text(), 
+					component_location: 'body',
+					page_name: 'home',
+					page_category: 'marketing'				 
+				});
+		    }
+			}, 100);
+		}
+
+		// Detect Refer a Friend form submissions
+		jQuery(document).on('submit', '#referral_form', function (event) {	
+			// setting random user ID
+			identifyUser("marketing_referral_" + Date.now() + "_" + Math.floor(Math.random() * 1000), {});
+			
+			trackEvent('Referral Created', { 
+				referrer_name: $("#referrer_name").val(),
+				referral_email: $("#referral_email").val(), 
+				referral_message: $("#referral_message").val(),
+			});				
+		});	
+
+		// Detect commercial form submissions
+		jQuery(document).on('submit', '#commercial_form', function (event) {
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			// Organization: Health plan
+			if ($('#commercial_health_plan').length > 0 && $('#commercial_health_plan').val() != '') {	
+				trackEvent('Form Submitted', { 
+					name: $("#commercial_first_name").val() + " " + $("#commercial_last_name").val(),
+					email: $("#commercial_email").val(),
+					phone: $("#commercial_phone").val(),
+					organization_type: $("#commercial_organization").val(),
+					health_plan_name: $("#commercial_health_plan").val(),
+					message: $("#commercial_message").val(),
+					form_name: $(this).attr('id'),
+					form_submission_timestamp: timestamp
+				});	
+			// Organization: Provider
+			} else if ($('#commercial_provider').length > 0 && $('#commercial_provider').val() != '') {	
+				trackEvent('Form Submitted', { 
+					name: $("#commercial_first_name").val() + " " + $("#commercial_last_name").val(),
+					email: $("#commercial_email").val(),
+					phone: $("#commercial_phone").val(),
+					organization_type: $("#commercial_organization").val(),
+					npi_number: $("#commercial_provider").val(),
+					message: $("#commercial_message").val(),
+					form_name: $(this).attr('id'),
+					form_submission_timestamp: timestamp
+				});			
+			// Organization: Employer	
+			} else if ($('#commercial_employer').length > 0 && $('#commercial_employer').val() != '') {	
+				trackEvent('Form Submitted', { 
+					name: $("#commercial_first_name").val() + " " + $("#commercial_last_name").val(),
+					email: $("#commercial_email").val(),
+					phone: $("#commercial_phone").val(),
+					organization_type: $("#commercial_organization").val(),
+					employer_name: $("#commercial_employer").val(),	
+					message: $("#commercial_message").val(),
+					form_name: $(this).attr('id'),
+					form_submission_timestamp: timestamp
+				});			
+			// Organization: No selection
+			} else {	
+				trackEvent('Form Submitted', { 
+					name: $("#commercial_first_name").val() + " " + $("#commercial_last_name").val(),
+					email: $("#commercial_email").val(),
+					phone: $("#commercial_phone").val(),
+					organization_type: $("#commercial_organization").val(),
+					message: $("#commercial_message").val(),
+					form_name: $(this).attr('id'),
+					form_submission_timestamp: timestamp
+				});					
+			}
+		});
+
+		// Detect non-commercial newsletter form submission in blog sidebar
+		jQuery(document).on('submit', '#newsletter_form', function (event) {	
+
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			identifyUser("newsletter_signup_" + Date.now() + "_" + Math.floor(Math.random() * 1000), {
+					email: $("#newsletter_email").val(),
+					newsletter_lead: "true",
+			});
+			
+			trackEvent('Form Submitted', { 
+				email: $("#newsletter_email").val(),
+				form_name: $(this).attr('id'),
+			  form_submission_timestamp: timestamp
+			});				
+		});	
+
+		// Detect non-commercial newsletter form submissions in blog mobile modal
+		jQuery(document).on('submit', '#newsletter_form_modal', function (event) {	
+
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			identifyUser("newsletter_signup_" + Date.now() + "_" + Math.floor(Math.random() * 1000), {
+					email: $("#newsletter_form_modal #newsletter_email").val(),
+					newsletter_lead: "true",
+			});
+			
+			trackEvent('Form Submitted', { 
+				email: $("#newsletter_form_modal #newsletter_email").val(),
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});				
+		});		
+
+		// Detect HCA intake form submissions
+		jQuery(document).on('submit', '#hca_form', function (event) {
+			// see if checkbox is selected
+			if ($('#hca_behalf').is(':checked')) {
+				var behalf = "someone-else";
+			} else {
+				var behalf = "myself";
+			}				
+
+			// get timestamp
+			var timestamp = new Date($.now());				
+
+			identifyUser(null, {
+				first_name: $("#hca_first_name").val(),
+				last_name: $("#hca_last_name").val(),
+				email: $("#hca_email").val(),
+				phone: "+1" + $("#hca_phone").val(),
+				entity: $("#hca_entity").val(),
+				behalf: behalf,
+				root_entity: 'HCA Healthcare'
+			});
+			
+			trackEvent('Form Submitted', { 
+				name: $("#hca_first_name").val() + " " + $("#hca_last_name").val(),
+				email: $("#hca_email").val(),
+				phone: $("#hca_phone").val(),
+				entity: $("#hca_entity").val(),
+				behalf: behalf,
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});
+
+		// Detect MemorialCare intake form submissions
+		jQuery(document).on('submit', '#memorial_form', function (event) {
+			// see if checkbox is selected
+			if ($('#memorial_behalf').is(':checked')) {
+				var behalf = "someone-else";
+			} else {
+				var behalf = "myself";
+			}				
+
+			// get timestamp
+			var timestamp = new Date($.now());				
+
+			identifyUser(null, {
+				first_name: $("#memorial_first_name").val(),
+				last_name: $("#memorial_last_name").val(),
+				email: $("#memorial_email").val(),
+				phone: "+1" + $("#memorial_phone").val(),
+				entity: $("#memorial_entity").val(),
+				behalf: behalf,
+				root_entity: 'MemorialCare'
+			});
+			
+			trackEvent('Form Submitted', { 
+				name: $("#memorial_first_name").val() + " " + $("#memorial_last_name").val(),
+				email: $("#memorial_email").val(),
+				phone: $("#memorial_phone").val(),
+				entity: $("#memorial_entity").val(),
+				behalf: behalf,
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});		
+
+		// Detect Onecare intake form submissions
+		jQuery(document).on('submit', '#onecare_form', function (event) {
+			// see if checkbox is selected
+			if ($('#onecare_behalf').is(':checked')) {
+				var behalf = "someone-else";
+			} else {
+				var behalf = "myself";
+			}				
+
+			// get timestamp
+			var timestamp = new Date($.now());				
+
+			identifyUser(null, {
+				first_name: $("#onecare_first_name").val(),
+				last_name: $("#onecare_last_name").val(),
+				email: $("#onecare_email").val(),
+				phone: "+1" + $("#onecare_phone").val(),
+				//entity: "Onecare Vermont",
+				behalf: behalf,
+				root_entity: 'Onecare Vermont'
+			});
+			
+			trackEvent('Form Submitted', { 
+				name: $("#onecare_first_name").val() + " " + $("#onecare_last_name").val(),
+				email: $("#onecare_email").val(),
+				phone: $("#onecarel_phone").val(),
+				behalf: behalf,
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});				
+
+		// Detect Insurance state dropdown selection
+		$('#state').change(function() {
+			trackEvent('Form Submitted', { 
+				component_id: $(this).attr('id'),
+				state: $("#state").val()
+			});	
+		});
+
+		// Detect Insurance newsletter form submissions
+		jQuery(document).on('submit', '#insurance_form', function (event) {
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			identifyUser("newsletter_signup_" + Date.now() + "_" + Math.floor(Math.random() * 1000), {
+					address_state_full: $("#insurance_state").val(),
+					email: $("#insurance_email").val(),
+					newsletter_lead: "true"
+			});
+			
+			trackEvent('Form Submitted', { 
+				email: $("#insurance_email").val(),
+				state: $("#insurance_state").val(),
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});
+
+		// Detect Teen Care newsletter form submissions
+		jQuery(document).on('submit', '#teen_form', function (event) {
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			identifyUser("newsletter_signup_" + Date.now() + "_" + Math.floor(Math.random() * 1000), {
+					address_state_full: $("#teen_state").val(),
+					email: $("#teen_email").val(),
+					newsletter_lead: "true",
+					teen_waitlist: "true"
+			});
+			
+			trackEvent('Form Submitted', { 
+				email: $("#teen_email").val(),
+				state: $("#teen_state").val(),
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});		
+
+		// Detect Quality Scorecard selection
+		jQuery(document).on('submit', '#quality_scorecard_form', function (event) {
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			trackEvent('Form Submitted', { 
+				name: $("#quality_scorecard_first_name").val() + " " + $("#quality_scorecard_last_name").val(),
+				email: $("#quality_scorecard_email").val(),
+				company: $("#quality_scorecard_company").val(),
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});		
+
+		// Detect Opening Questions insurance check selections
+		const dropdownNames = {
+			opening_care_for: 'Insurance Check: Care For',
+			opening_state: 'Insurance Check: State',
+			opening_insurance_coverage: 'Insurance Check: Insurance'
+		};
+
+		['opening_care_for', 'opening_state', 'opening_insurance_coverage'].forEach(function (id) {
+		  const selection = document.getElementById(id);
+		  if (!selection) return;
+
+		  // Dropdown expand
+		  selection.addEventListener('pointerdown', function () {
+		    analytics.track('Component Clicked', {
+		      component_name: dropdownNames[id],
+		      //component_text: '', // nothing selected yet
+		      component_trigger: 'Expand',
+		      component_type: 'Dropdown'
+		    });
+		  });	
+
+		  // Dropdown select
+		  selection.addEventListener('change', function () {
+		    const selectionValue =
+		      id === 'opening_insurance_coverage'
+		        ? selection.options[selection.selectedIndex]?.text.trim()
+		        : selection.value;
+
+		    analytics.track('Component Clicked', {
+		      component_name: dropdownNames[id],
+		      component_text: selectionValue,
+		      component_trigger: 'Selected',
+		      component_type: 'Dropdown'
+		    });
+		  });
+		});
+
+		// Detect Opening Questions insurance check submissions
+		jQuery(document).on('submit', '#opening_form', function (event) {
+			// get timestamp
+			var timestamp = new Date($.now());
+
+			trackEvent('Form Submitted', { 
+				care_for: $("#opening_care_for").val(),
+				preferred_name: $("#opening_preferred_name").val(),
+				state: $("#opening_state").val(),
+				insurance_payer: $("#opening_insurance_coverage option:selected").text(),
+				form_name: $(this).attr('id'),
+				form_submission_timestamp: timestamp
+			});	
+		});
+	});
+
+} catch (e) {
+	console.log(e);
+}

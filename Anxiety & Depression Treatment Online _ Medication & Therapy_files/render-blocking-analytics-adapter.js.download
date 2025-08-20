@@ -1,0 +1,435 @@
+/**
+ * Analytics Adapter for Dual Tracking (Segment + PostHog)
+ * This adapter ensures safe migration by sending events to both analytics providers
+ * with proper error handling and fallback mechanisms.
+ */
+
+(function(window) {
+    'use strict';
+
+    class AnalyticsAdapter {
+        constructor(config = {}) {
+            this.config = {
+                enableSegment: config.enableSegment !== false,
+                enablePosthog: config.enablePosthog !== false,
+                debug: config.debug || false,
+                retryAttempts: config.retryAttempts || 3,
+                retryDelay: config.retryDelay || 1000,
+                queueEvents: config.queueEvents !== false,
+                maxQueueSize: config.maxQueueSize || 100
+            };
+
+            this.eventQueue = [];
+            this.isInitialized = false;
+            this.initializationPromise = null;
+            
+            // Track failed events for monitoring
+            this.failedEvents = {
+                segment: [],
+                posthog: []
+            };
+
+            // Performance metrics
+            this.metrics = {
+                eventsSent: 0,
+                eventsQueued: 0,
+                eventsFailed: 0
+            };
+        }
+
+        /**
+         * Initialize the analytics adapter
+         */
+        async initialize() {
+            if (this.isInitialized) return;
+            if (this.initializationPromise) return this.initializationPromise;
+
+            this.initializationPromise = this._performInitialization();
+            return this.initializationPromise;
+        }
+
+        async _performInitialization() {
+            try {
+                // Wait for analytics libraries to be available
+                await this._waitForLibraries();
+                
+                this.isInitialized = true;
+                this._log('Analytics adapter initialized successfully');
+                
+                // Process any queued events
+                this._processQueue();
+                
+                return true;
+            } catch (error) {
+                this._logError('Failed to initialize analytics adapter', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Wait for analytics libraries to load
+         */
+        async _waitForLibraries(timeout = 10000) {
+            const startTime = Date.now();
+            
+            return new Promise((resolve, reject) => {
+                const checkLibraries = () => {
+                    const segmentReady = !this.config.enableSegment || 
+                                       (window.analytics && typeof window.analytics.track === 'function');
+                    const posthogReady = !this.config.enablePosthog || 
+                                       (window.posthog && typeof window.posthog.capture === 'function');
+                    
+                    if (segmentReady && posthogReady) {
+                        resolve();
+                    } else if (Date.now() - startTime > timeout) {
+                        reject(new Error('Timeout waiting for analytics libraries'));
+                    } else {
+                        setTimeout(checkLibraries, 100);
+                    }
+                };
+                
+                checkLibraries();
+            });
+        }
+
+        /**
+         * Track an event
+         */
+        track(eventName, properties = {}, options = {}) {
+            if (!eventName) {
+                this._logError('Event name is required');
+                return;
+            }
+
+            const event = {
+                name: eventName,
+                properties: this._enrichProperties(properties),
+                options,
+                timestamp: new Date().toISOString()
+            };
+
+            if (!this.isInitialized) {
+                this._queueEvent('track', event);
+                return;
+            }
+
+            this._sendToProviders('track', event);
+        }
+
+        /**
+         * Identify a user
+         */
+        identify(userId, traits = {}, options = {}) {
+            const identification = {
+                userId,
+                traits: this._enrichProperties(traits),
+                options,
+                timestamp: new Date().toISOString()
+            };
+
+            if (!this.isInitialized) {
+                this._queueEvent('identify', identification);
+                return;
+            }
+
+            this._sendToProviders('identify', identification);
+        }
+
+        /**
+         * Track a page view
+         */
+        page(category, name, properties = {}, options = {}) {
+            const pageview = {
+                category,
+                name,
+                properties: this._enrichProperties(properties),
+                options,
+                timestamp: new Date().toISOString()
+            };
+
+            if (!this.isInitialized) {
+                this._queueEvent('page', pageview);
+                return;
+            }
+
+            this._sendToProviders('page', pageview);
+        }
+
+        /**
+         * Group a user
+         */
+        group(groupId, traits = {}, options = {}) {
+            const grouping = {
+                groupId,
+                traits: this._enrichProperties(traits),
+                options,
+                timestamp: new Date().toISOString()
+            };
+
+            if (!this.isInitialized) {
+                this._queueEvent('group', grouping);
+                return;
+            }
+
+            this._sendToProviders('group', grouping);
+        }
+
+        /**
+         * Send event to all enabled providers
+         */
+        async _sendToProviders(method, data) {
+            const promises = [];
+            
+            if (this.config.enableSegment && window.analytics) {
+                promises.push(this._sendToSegment(method, data));
+            }
+            
+            if (this.config.enablePosthog && window.posthog) {
+                promises.push(this._sendToPosthog(method, data));
+            }
+            
+            // Use Promise.allSettled to ensure both providers are called
+            const results = await Promise.allSettled(promises);
+            
+            // Log any failures
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    const provider = index === 0 ? 'Segment' : 'PostHog';
+                    this._logError(`Failed to send to ${provider}:`, result.reason);
+                }
+            });
+            
+            this.metrics.eventsSent++;
+        }
+
+        /**
+         * Send event to Segment
+         */
+        async _sendToSegment(method, data) {
+            try {
+                switch (method) {
+                    case 'track':
+                        window.analytics.track(data.name, data.properties, data.options);
+                        break;
+                    case 'identify':
+                        if (data.userId) {
+                            window.analytics.identify(data.userId, data.traits, data.options);
+                        } else {
+                            window.analytics.identify(data.traits, data.options);
+                        }
+                        break;
+                    case 'page':
+                        if (data.category && data.name) {
+                            window.analytics.page(data.category, data.name, data.properties, data.options);
+                        } else if (data.name) {
+                            window.analytics.page(data.name, data.properties, data.options);
+                        } else {
+                            window.analytics.page(data.properties, data.options);
+                        }
+                        break;
+                    case 'group':
+                        window.analytics.group(data.groupId, data.traits, data.options);
+                        break;
+                }
+                this._log(`Sent ${method} to Segment:`, data);
+            } catch (error) {
+                this._handleProviderError('segment', method, data, error);
+                throw error;
+            }
+        }
+
+        /**
+         * Send event to PostHog
+         */
+        async _sendToPosthog(method, data) {
+            try {
+                switch (method) {
+                    case 'track':
+                        window.posthog.capture(data.name, data.properties);
+                        break;
+                    case 'identify':
+                        if (data.userId) {
+                            window.posthog.identify(data.userId, data.traits);
+                        }
+                        // PostHog uses $set for user properties
+                        if (data.traits && Object.keys(data.traits).length > 0) {
+                            window.posthog.people.set(data.traits);
+                        }
+                        break;
+                    case 'page':
+                        // PostHog tracks pageviews automatically, but we can send custom pageview events
+                        window.posthog.capture('$pageview', {
+                            $current_url: window.location.href,
+                            ...data.properties
+                        });
+                        break;
+                    case 'group':
+                        window.posthog.group('company', data.groupId, data.traits);
+                        break;
+                }
+                this._log(`Sent ${method} to PostHog:`, data);
+            } catch (error) {
+                this._handleProviderError('posthog', method, data, error);
+                throw error;
+            }
+        }
+
+        /**
+         * Queue event for later processing
+         */
+        _queueEvent(method, data) {
+            if (!this.config.queueEvents) {
+                this._log('Event queuing disabled, dropping event:', data);
+                return;
+            }
+
+            if (this.eventQueue.length >= this.config.maxQueueSize) {
+                this._logError('Event queue full, dropping oldest event');
+                this.eventQueue.shift();
+            }
+
+            this.eventQueue.push({ method, data });
+            this.metrics.eventsQueued++;
+            this._log('Event queued:', { method, data });
+        }
+
+        /**
+         * Process queued events
+         */
+        async _processQueue() {
+            if (this.eventQueue.length === 0) return;
+
+            this._log(`Processing ${this.eventQueue.length} queued events`);
+            
+            const events = [...this.eventQueue];
+            this.eventQueue = [];
+
+            for (const event of events) {
+                await this._sendToProviders(event.method, event.data);
+            }
+        }
+
+        /**
+         * Enrich properties with additional context
+         */
+        _enrichProperties(properties) {
+            return {
+                ...properties,
+                _timestamp: new Date().toISOString(),
+                _adapter_version: '1.0.0',
+                _page_url: window.location.href,
+                _page_title: document.title,
+                _referrer: document.referrer,
+                _user_agent: navigator.userAgent
+            };
+        }
+
+        /**
+         * Handle provider errors
+         */
+        _handleProviderError(provider, method, data, error) {
+            this.metrics.eventsFailed++;
+            
+            const failedEvent = {
+                provider,
+                method,
+                data,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+            
+            this.failedEvents[provider].push(failedEvent);
+            
+            // Keep only last 100 failed events per provider
+            if (this.failedEvents[provider].length > 100) {
+                this.failedEvents[provider].shift();
+            }
+            
+            this._logError(`Failed to send ${method} to ${provider}:`, error);
+        }
+
+        /**
+         * Get metrics
+         */
+        getMetrics() {
+            return {
+                ...this.metrics,
+                queueSize: this.eventQueue.length,
+                failedEventsCount: {
+                    segment: this.failedEvents.segment.length,
+                    posthog: this.failedEvents.posthog.length
+                }
+            };
+        }
+
+        /**
+         * Get failed events
+         */
+        getFailedEvents(provider = null) {
+            if (provider) {
+                return [...this.failedEvents[provider]];
+            }
+            return {
+                segment: [...this.failedEvents.segment],
+                posthog: [...this.failedEvents.posthog]
+            };
+        }
+
+        /**
+         * Clear failed events
+         */
+        clearFailedEvents(provider = null) {
+            if (provider) {
+                this.failedEvents[provider] = [];
+            } else {
+                this.failedEvents.segment = [];
+                this.failedEvents.posthog = [];
+            }
+        }
+
+        /**
+         * Debug logging
+         */
+        _log(...args) {
+            if (this.config.debug) {
+                console.log('[AnalyticsAdapter]', ...args);
+            }
+        }
+
+        /**
+         * Error logging
+         */
+        _logError(...args) {
+            console.error('[AnalyticsAdapter]', ...args);
+        }
+    }
+
+    // Create global instance
+    window.analyticsAdapter = new AnalyticsAdapter({
+        enableSegment: true,
+        enablePosthog: true,
+        debug: window.location.hostname === 'localhost',
+        queueEvents: true,
+        maxQueueSize: 100
+    });
+
+    // Auto-initialize when DOM is ready
+    // PostHog is initialized via WordPress plugin, so we need to wait for it
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Give PostHog plugin time to initialize
+            setTimeout(() => {
+                window.analyticsAdapter.initialize();
+            }, 100);
+        });
+    } else {
+        // If DOM is already loaded, still wait a bit for PostHog
+        setTimeout(() => {
+            window.analyticsAdapter.initialize();
+        }, 100);
+    }
+
+    // Expose for backwards compatibility
+    window.AnalyticsAdapter = AnalyticsAdapter;
+
+})(window);

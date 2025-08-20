@@ -1,0 +1,78 @@
+jQuery(function($){
+
+  // add browser cookie based on tracking UTMs in URL
+  if (window.location.href.indexOf("utm_source=") != -1) {
+
+    // grab all the UTMs 
+    var $url = window.location.search;
+    var $urlParams = new URLSearchParams($url);
+
+    var $utm_medium = $urlParams.get('utm_medium'); 
+    var $utm_source = $urlParams.get('utm_source'); 
+    var $utm_term = $urlParams.get('utm_term'); 
+    var $utm_content = $urlParams.get('utm_content'); 
+    var $utm_campaign = $urlParams.get('utm_campaign'); 
+    var $gclid = $urlParams.get('gclid'); 
+    var $fbclid = $urlParams.get('fbclid'); 
+
+    // consolidate everything
+    var $lead_info = { 
+      utm_medium: $utm_medium, 
+      utm_source: $utm_source,
+      utm_term: $utm_term, 
+      utm_content: $utm_content,
+      utm_campaign: $utm_campaign,
+      gclid: $gclid, 
+      fbclid: $fbclid           
+    };
+
+    // encode it
+    var $lead_info_string = JSON.stringify($lead_info);
+
+    // set the cookie
+    Cookies.set('_lead_info', btoa($lead_info_string), { expires: 1, path: '/', domain: '.brightside.com' } );
+  }   
+
+
+  // WOW
+  new WOW().init();
+  (function($) {
+    $.fn.visible = function(partial) {
+
+        var $t            = $(this),
+            $w            = $(window),
+            viewTop       = $w.scrollTop(),
+            viewBottom    = viewTop + $w.height(),
+            _top          = $t.offset().top,
+            _bottom       = _top + $t.height(),
+            compareTop    = partial === true ? _bottom : _top,
+            compareBottom = partial === true ? _top : _bottom;
+
+      return ((compareBottom <= viewBottom) && (compareTop >= viewTop));
+    };
+  })(jQuery);
+
+
+  // Add into view 
+  $(window).scroll(function(event) {
+    $(".view").each(function(i, el) {
+      var el = $(el);
+      if (el.visible(true)) {
+        el.addClass("in-view"); 
+      } else {
+        //el.removeClass("in-view"); // this reverses on not-in-view
+      }
+    });
+  });
+
+
+  // Route users after embedded in-content form submission
+  // Anxiety
+  jQuery(document).on('submit', '#anxietyform', function (event) {
+    window.location.assign(
+      "https://app.brightside.com/intake/onboarding/opening-questions/welcome-2",
+    );
+    return false;
+  });   
+
+});

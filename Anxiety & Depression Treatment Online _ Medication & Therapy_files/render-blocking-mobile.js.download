@@ -1,0 +1,36 @@
+$(document).ready(function(){ 
+
+  // update footer accordion button on hover/click
+  $('#heading-footer-nav').hover(
+     function(e){
+       $("#heading-footer-nav img").attr("src","/wp-content/themes/brightside-v4/assets/caret-sapphire.svg");
+     },
+     function(e){
+       $("#heading-footer-nav img").attr("src","/wp-content/themes/brightside-v4/assets/caret-white.svg");
+     }
+  );
+
+  $('#footer-nav').on('shown.bs.collapse',function(){
+      $('#heading-footer-nav').html('Hide navigation <img src="/wp-content/themes/brightside-v4/assets/caret-sapphire.svg" alt="">');
+      $("#heading-footer-nav img").css("transform", "rotate(180deg)");
+
+    $('#heading-footer-nav').hover(
+       function(e){
+         $("#heading-footer-nav img").attr("src","/wp-content/themes/brightside-v4/assets/caret-sapphire.svg");
+       }
+    );
+  });
+
+  $('#footer-nav').on('hidden.bs.collapse',function(){
+      $('#heading-footer-nav').html('Show navigation <img src="/wp-content/themes/brightside-v4/assets/caret-sapphire.svg" alt="">');
+      $("#heading-footer-nav img").css("transform", "rotate(0)");
+
+    $('#heading-footer-nav').hover(
+       function(e){
+         $("#heading-footer-nav img").attr("src","/wp-content/themes/brightside-v4/assets/caret-sapphire.svg");
+       }
+    );
+  });
+
+
+});    
